@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <div class="container mt-5">
+    <div class="container mt-5 mb-5">
         <div class="titleBox">
             <h1 class="text-center">Product Management</h1>
             <p class="text-center fs-6">A Simple CRUD Product Management App</p>

@@ -37,11 +37,7 @@
         </div>
         <div>
             <input type="checkbox">
-            <label>CRUD</label>
-        </div>
-        <div>
-            <input type="checkbox">
-            <label>Search Item</label>
+            <label>Read and Create</label>
         </div>
         <div style="background-color:#bc8b12; padding:20px; margin-top:30px">
             <p style="color:black; font-weight:bold; font-size:1.2rem;">!!! Note</p>
