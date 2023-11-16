@@ -1,0 +1,67 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  background-color: greenyellow;
+  display: grid;
+  grid-template-areas:
+    "c1 c2 c2 c3"
+    "c1 c4 c5 c6"
+    "c1 c7 c8 c6";
+  /* grid-template-rows: 1fr 2fr 3fr; */
+  /* grid-auto-rows: 250px; */
+  /* grid-auto-flow: column; */
+  /* grid-template-columns: 1fr 2fr 3fr; */
+  /* grid-auto-columns: 250px; */
+}
+
+.content {
+  border: 0.8px solid black;
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.content:nth-child(1) {
+  grid-area: c1;
+  /* background-color: tomato; */
+  background-color: green;
+  /* grid-column-start: 1;
+  grid-column-end: 4; */
+  /* grid-column: 1 / 4; */
+}
+
+.content:nth-child(2) {
+  grid-area: c2;
+  /* background-color: yellow; */
+  background-color: green;
+  /* grid-row-start: 3;
+  grid-row-end: 5; */
+  /* grid-row: 3 / 5; */
+}
+.content:nth-child(3) {
+  grid-area: c3;
+  background-color: red;
+}
+.content:nth-child(4) {
+  grid-area: c4;
+  background-color: yellow;
+}
+.content:nth-child(5) {
+  background-color: red;
+  grid-area: c5;
+}
+.content:nth-child(6) {
+  grid-area: c6;
+  background-color: green;
+}
+.content:nth-child(7) {
+  background-color: red;
+  grid-area: c7;
+}
+.content:nth-child(8) {
+  background-color: yellow;
+  grid-area: c8;
+}
