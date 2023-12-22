@@ -1,0 +1,178 @@
+<?php
+session_start();
+$conn = "";
+$stmt = "";
+
+function connectToDB()
+{
+    $servername = "localhost";
+    $username = "root";
+    $passowrd = "";
+    $dbName = "myrestaurant";
+    $dataSourceName = "mysql:host=" . $servername . ";dbname=" . $dbName;
+    try{
+        $conn = new PDO($dataSourceName, $username, $passowrd);
+        return $conn;
+    }
+    catch(PDOException $e){
+        echo $e->getMessage();
+        return null;
+    }
+}
+
+function closeConnection()
+{
+    $conn = null;
+    $stmt = null;
+}
+
+connectToDB();
+
+function login($data)
+{
+    $conn = connectToDB();
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->execute([
+        $data["email"]
+    ]);
+    $user = $stmt->fetch();
+    if ($user) // * Cek apakah email user ada atau tidak
+    {
+        $validated = password_verify($data["password"], $user["password"]);
+        if ($validated) // * Cek apakah password user benar atau tidak
+        {
+            $_SESSION["login"] = true;
+            if (isset($data["checkbox"])){
+                setcookie("email", $data["email"], time() + 3600);
+                // echo "ok!";
+            }
+            header("Location: index.php");
+        }
+        else{
+            echo "<script>alert('Email or password is not valid!')</script>";
+        }
+    }
+    else{
+        echo "<script>alert('Email or password is not valid!')</script>";
+    }
+    closeConnection();
+}
+
+function register($data)
+{
+    $conn = connectToDB();
+    $stmt = $conn->prepare("INSERT INTO users (username, fullname, email, password) VALUES (?, ?, ?, ?)");
+    $stmt->execute([
+        $data["username"],
+        $data["name"],
+        $data["email"],
+        password_hash($data["password"], PASSWORD_DEFAULT)
+    ]);
+    closeConnection();
+}
+
+function getAllFoods()
+{
+    $conn = connectToDB();
+    $stmt = $conn->query("SELECT foods.photo, foods.id, foods.food_name, foods.price, foods.description, categories.category_name FROM foods INNER JOIN categories ON foods.category_id = categories.id");
+    $foods = [];
+    while($food = $stmt->fetch(PDO::FETCH_ASSOC)){
+        array_push($foods, $food);
+    }
+    return $foods;
+    closeConnection();
+}
+
+function getAllCategories()
+{
+    $conn = connectToDB();
+    $stmt = $conn->query("SELECT * FROM categories");
+    $categories = [];
+    while($category = $stmt->fetch(PDO::FETCH_ASSOC)){
+        array_push($categories, $category);
+    }
+    return $categories;
+    closeConnection();
+}
+
+function getFoodById($data)
+{
+    $conn = connectToDB();
+    $stmt = $conn->prepare("SELECT * FROM foods WHERE id = ?");
+    $stmt->execute([
+        $data["id"]
+    ]);
+    $food = $stmt->fetch();
+    return $food;
+    closeConnection();
+}
+
+function validate($data)
+{
+    // email
+    if (!$data['email'])
+    {
+        echo "
+        <script>
+            alert('Email cannot be empty!');
+        </script>
+        ";
+    }
+    // @gmail.com, @binus.ac.id
+    else if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL))
+    {
+        echo "
+        <script>
+            alert('Email is not valid!');
+        </script>
+        ";
+    }
+    // password
+    else if (!$data['password'])
+    {
+        echo "
+        <script>
+            alert('Password cannot be empty!');
+        </script>
+        ";
+    }
+}
+
+function createFood($data, $img)
+{
+    $conn = connectToDB();
+    move_uploaded_file($img['tmp_name'], '../img/' . $img['name']);
+    $stmt = $conn->prepare("INSERT INTO foods (category_id, food_name, price, description, photo) VALUES (?, ?, ?, ?, ?)");
+    $stmt->execute([
+        $data["category"],
+        $data["name"],
+        $data["price"],
+        $data["description"],
+        $img['name']
+    ]);
+    closeConnection();
+}
+
+function updateFood($data)
+{
+    $conn = connectToDB();
+    $stmt = $conn->prepare("UPDATE foods SET category_id = ?, food_name = ?, price = ?, description = ? WHERE id = ?");
+    $stmt->execute([
+        $data["category"],
+        $data["name"],
+        $data["price"],
+        $data["description"],
+        $data["id"],
+    ]);
+    closeConnection();
+}
+
+function deleteFood($data)
+{
+    $conn = connectToDB();
+    $stmt = $conn->prepare("DELETE FROM foods WHERE id = ?");
+    $stmt->execute([
+        $data["id"]
+    ]);
+    closeConnection();
+}
